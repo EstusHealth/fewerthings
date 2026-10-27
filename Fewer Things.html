@@ -1,0 +1,420 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Fewer Things</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bitter:wght@500;700&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+/* Layout: a library card catalogue. Index cards in four drawers, date-stamp violet marks every decision. */
+:root{
+  --paper:#E6EBEE; --drawer:#DCE3E7; --card:#FBFCFC; --ink:#1C2733; --muted:#5A6672; --rule:#C7D0D6;
+  --stamp:#5A3FB0; --stamp-soft:#E7E1F6; --good:#2E7650; --warn:#9A5B10; --bad:#A23B3B;
+  --f-display:"Bitter",Georgia,serif; --f-body:"Atkinson Hyperlegible",system-ui,sans-serif; --f-mono:"Courier Prime","Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#11161B; --drawer:#161D23; --card:#1D252C; --ink:#E3E8EC; --muted:#97A3AD; --rule:#2F3A44;
+  --stamp:#AE9CF2; --stamp-soft:#2A2445; --good:#6FC598; --warn:#E2A85E; --bad:#E58787; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11161B; --drawer:#161D23; --card:#1D252C; --ink:#E3E8EC; --muted:#97A3AD; --rule:#2F3A44;
+  --stamp:#AE9CF2; --stamp-soft:#2A2445; --good:#6FC598; --warn:#E2A85E; --bad:#E58787; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px}
+.wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;justify-content:space-between}
+.brand h1{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.01em}
+.brand p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.slots{display:flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.slots .box{width:26px;height:34px;border:1.5px dashed var(--rule);border-radius:3px}
+.slots .box.on{border:1.5px solid var(--stamp);background:var(--stamp-soft)}
+.capture{display:flex;flex-wrap:wrap;gap:8px;background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:10px}
+.capture input{flex:1 1 260px;min-width:0;border:0;background:transparent;padding:8px 6px;font-size:16px}
+.capture input:focus{outline:none}
+.capture:focus-within{border-color:var(--stamp)}
+select,.field input,.field textarea{background:var(--card);border:1px solid var(--rule);border-radius:4px;padding:7px 9px}
+.btn{border:1px solid var(--rule);background:var(--card);border-radius:4px;padding:8px 14px;cursor:pointer;font-weight:700}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--stamp);border-color:var(--stamp);color:var(--card)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.quiet{border-color:transparent;background:transparent;color:var(--muted);font-weight:400}
+.btn.quiet:hover{color:var(--ink)}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.hint{font-size:13px;color:var(--muted);margin:0}
+.note{background:var(--stamp-soft);border-radius:4px;padding:8px 12px;font-size:14px}
+
+/* board */
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:start}
+@media (max-width:1080px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.board{grid-template-columns:minmax(0,1fr)}}
+.col{background:var(--drawer);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.col.active{background:var(--stamp-soft);outline:1.5px solid var(--stamp)}
+.col-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:2px 4px 4px}
+.col-head h2{font-size:17px}
+.col-head .count{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.col-sub{font-size:12.5px;color:var(--muted);margin:-6px 4px 2px}
+.empty{border:1.5px dashed var(--rule);border-radius:6px;padding:18px 14px;color:var(--muted);font-size:13.5px;text-align:center}
+
+/* index card */
+.card{position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;width:100%;cursor:pointer;
+  background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:10px 12px 20px;
+  background-image:linear-gradient(var(--card),var(--card)),repeating-linear-gradient(transparent 0 23px,var(--rule) 23px 24px);
+  background-size:100% 34px,100% 100%;background-repeat:no-repeat,repeat;background-position:0 0,0 10px;
+  box-shadow:0 1px 0 var(--rule);transition:transform .12s}
+.card:hover{transform:translateY(-1px);border-color:var(--muted)}
+.card::after{content:"";position:absolute;bottom:6px;left:50%;width:8px;height:8px;margin-left:-4px;border-radius:50%;background:var(--drawer);border:1px solid var(--rule)}
+.card .row1{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.area{font-family:var(--f-mono);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.card .t{font-family:var(--f-display);font-weight:500;font-size:16px;line-height:1.3;overflow-wrap:anywhere}
+.card .meta{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.stamp{display:inline-block;font-family:var(--f-mono);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--stamp);border:1.5px solid var(--stamp);border-radius:3px;padding:1px 6px;transform:rotate(-2deg);white-space:nowrap}
+.stamp.cool{color:var(--warn);border-color:var(--warn)}
+.stamp.fail{color:var(--muted);border-color:var(--muted)}
+.stamp.done{color:var(--good);border-color:var(--good)}
+.linkish{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:13px;padding:2px 4px;align-self:flex-start}
+
+/* footer */
+.foot{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;color:var(--muted);font-size:13.5px}
+.foot label{display:flex;gap:8px;align-items:center}
+
+/* dialogs */
+dialog{border:1px solid var(--rule);border-radius:8px;background:var(--card);color:var(--ink);padding:0;width:min(640px,calc(100vw - 32px));max-height:calc(100dvh - 40px)}
+dialog::backdrop{background:rgba(10,14,20,.45)}
+.dlg{display:flex;flex-direction:column;gap:16px;padding:20px}
+.dlg h3{font-size:22px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label,.legend{font-family:var(--f-mono);font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.field textarea{min-height:84px;resize:vertical}
+.two{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+@media (max-width:520px){.two{grid-template-columns:1fr}}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.actions .spacer{flex:1}
+.sum{border-top:1px solid var(--rule);padding-top:12px;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.sum dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0}
+.sum dt{color:var(--muted)} .sum dd{margin:0;overflow-wrap:anywhere}
+fieldset{border:1px solid var(--rule);border-radius:6px;padding:12px 14px;margin:0;display:flex;flex-direction:column;gap:12px;min-width:0}
+legend{padding:0 6px;font-family:var(--f-display);font-weight:700;font-size:15px}
+.crit{display:flex;flex-direction:column;gap:6px}
+.crit .q{font-weight:700;font-size:14.5px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+.scale input{position:absolute;opacity:0;pointer-events:none}
+.scale label{display:block;text-align:center;border:1px solid var(--rule);border-radius:4px;padding:6px 0;cursor:pointer;font-family:var(--f-mono);font-weight:700}
+.scale input:checked+label{background:var(--stamp);border-color:var(--stamp);color:var(--card)}
+.scale input:focus-visible+label{outline:2px solid var(--stamp);outline-offset:2px}
+.anchors{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);gap:12px}
+.check{display:flex;gap:8px;align-items:flex-start;font-size:14.5px}
+.verdict{position:sticky;bottom:0;background:var(--card);border-top:1px solid var(--rule);padding:14px 20px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.verdict .score{font-family:var(--f-mono);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
+.verdict .why{flex:1 1 200px;font-size:13.5px;color:var(--muted)}
+.verdict .why.ok{color:var(--good)}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Fewer Things</h1>
+      <p>Do fewer things. Work at a natural pace. Obsess over quality.</p>
+    </div>
+    <div class="slots" id="slots" aria-label="Active slots"></div>
+  </header>
+
+  <form class="capture" id="capture" autocomplete="off">
+    <input id="cap-title" placeholder="Capture a pre-workout idea…" aria-label="Idea title" maxlength="140">
+    <select id="cap-area" aria-label="Area"></select>
+    <button class="btn primary" type="submit">Capture</button>
+  </form>
+  <p class="hint" id="cap-hint"></p>
+  <div class="note" id="note" hidden></div>
+
+  <main class="board" id="board"></main>
+
+  <footer class="foot">
+    <label>Active cap
+      <select id="set-cap"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+    </label>
+    <label>Idea cool-off
+      <select id="set-cool"><option value="0">None</option><option value="1">1 day</option><option value="3">3 days</option><option value="7">7 days</option></select>
+    </label>
+    <label>Pass mark
+      <select id="set-pass"><option>18</option><option>20</option><option>22</option><option>24</option></select>
+      <span>/ 30</span>
+    </label>
+  </footer>
+</div>
+
+<dialog id="detail"><div class="dlg" id="detail-body"></div></dialog>
+<dialog id="qual"><form id="qual-form" autocomplete="off"></form></dialog>
+
+<script>
+const AREAS=[["estus","Estus"],["driving","Driving OT"],["plab","Performance Lab"],["personal","Personal"],["other","Other"]];
+const CRIT=[
+  ["north","Moves the north star","Grows non-Liam revenue or the long game.","Nice to have","Directly moves it"],
+  ["leverage","Leverage","Will it keep paying off without you in the room?","Needs me every week","Runs without me"],
+  ["effort","Effort","How big is the build to reach a real result?","Huge build","Small and fast"],
+  ["needle","Needle, not scaffolding","Doing the work that pays, or building tools around the work?","Tools and infrastructure","The work that pays"],
+  ["cooled","Still want it","Excitement after the cool-off, not in the moment.","Gym buzz only","Still burning"],
+  ["season","Right season","Does this matter now, or later in the decade?","Wrong time","Now matters"]
+];
+const STAGES=[
+  ["idea","Pre-workout ideas","Capture freely. Nothing here is a commitment."],
+  ["waiting","Waiting","Qualified. Best score first. Pull when a slot opens."],
+  ["active","Active","The only things getting your time."],
+  ["done","Finished","Shipped. Proof you did fewer things well."]
+];
+const DAY=864e5;
+let projects=[], settings={cap:3,coolDays:3,pass:20}, db=null, local=false, loaded=false, showShelved=false, openId=null;
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const areaName=k=>(AREAS.find(a=>a[0]===k)||[0,"Other"])[1];
+const fmt=t=>t?new Date(t).toLocaleDateString("en-AU",{day:"numeric",month:"short"}):"";
+const newId=()=>"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const coolLeft=p=>Math.max(0,(p.createdAt||0)+settings.coolDays*DAY-Date.now());
+const activeCount=()=>projects.filter(p=>p.stage==="active").length;
+function note(msg){const n=$("#note");n.textContent=msg||"";n.hidden=!msg}
+
+/* storage */
+async function put(id,data){
+  if(local){const i=projects.findIndex(p=>p.id===id);const row={id,...data};if(i>=0)projects[i]=row;else projects.push(row);render();return}
+  try{await db.doc("projects/"+id).set(data)}catch(e){note(e.code==="quota_exceeded"?"The board is full. Delete some finished or shelved cards.":"That change did not save. Check your connection and try again.")}
+}
+async function patch(id,data){const p=projects.find(x=>x.id===id);if(!p)return;const next={...p,...data};delete next.id;await put(id,next)}
+async function removeCard(id){
+  if(local){projects=projects.filter(p=>p.id!==id);render();return}
+  try{await db.doc("projects/"+id).delete()}catch(e){note("Delete did not go through. Try again.")}
+}
+async function saveSettings(){
+  render();
+  if(local)return;
+  try{await db.doc("settings/main").set({...settings})}catch(e){note("Settings did not save.")}
+}
+
+/* render */
+function cardHTML(p){
+  let meta="",stamp="";
+  if(p.stage==="idea"){
+    const left=coolLeft(p);
+    if(left>0)stamp=`<span class="stamp cool">Cooling ${Math.ceil(left/DAY)}d</span>`;
+    else if(p.qual&&p.qual.verdict==="fail")stamp=`<span class="stamp fail">Not yet ${p.qual.total}/30</span>`;
+    meta=left>0?"Captured "+fmt(p.createdAt):"Ready to qualify";
+  }else if(p.stage==="waiting"){
+    stamp=p.qual?`<span class="stamp">Qualified ${p.qual.total}/30</span>`:`<span class="stamp fail">Not scored</span>`;
+    meta=p.nextStep?"First step: "+esc(p.nextStep):"";
+  }else if(p.stage==="active"){
+    meta=(p.nextStep?"Next: "+esc(p.nextStep)+"<br>":"")+"Active since "+fmt(p.activatedAt);
+  }else if(p.stage==="done"){
+    stamp=`<span class="stamp done">Done ${fmt(p.finishedAt)}</span>`;
+  }else if(p.stage==="shelved"){
+    stamp=`<span class="stamp fail">Shelved</span>`;
+  }
+  return `<button class="card" type="button" data-id="${esc(p.id)}">
+    <span class="row1"><span class="area">${esc(areaName(p.area))}</span>${stamp}</span>
+    <span class="t">${esc(p.title)}</span>${meta?`<span class="meta">${meta}</span>`:""}</button>`;
+}
+function sorted(stage){
+  const list=projects.filter(p=>p.stage===stage);
+  if(stage==="idea")list.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  if(stage==="waiting")list.sort((a,b)=>((b.qual&&b.qual.total)||0)-((a.qual&&a.qual.total)||0));
+  if(stage==="active")list.sort((a,b)=>(a.activatedAt||0)-(b.activatedAt||0));
+  if(stage==="done"||stage==="shelved")list.sort((a,b)=>(b.finishedAt||0)-(a.finishedAt||0));
+  return list;
+}
+const EMPTY={
+  idea:"Empty for now. Type an idea in the box above.",
+  waiting:"Nothing qualified yet. Open an idea and run the qualification.",
+  active:"No active projects. Pull the top card from Waiting.",
+  done:"Finished projects land here."
+};
+function render(){
+  const n=activeCount();
+  $("#slots").innerHTML=`<span>Active</span>`+Array.from({length:settings.cap},(_,i)=>`<span class="box${i<n?" on":""}"></span>`).join("")+`<span>${n}/${settings.cap}</span>`;
+  $("#cap-hint").textContent=settings.coolDays>0?`New ideas cool off for ${settings.coolDays} day${settings.coolDays>1?"s":""} before they can be qualified.`:"Ideas can be qualified straight away.";
+  $("#set-cap").value=String(settings.cap);$("#set-cool").value=String(settings.coolDays);$("#set-pass").value=String(settings.pass);
+  $("#board").innerHTML=STAGES.map(([k,name,sub])=>{
+    const list=sorted(k);
+    let extra="";
+    if(k==="done"){
+      const sh=sorted("shelved");
+      if(sh.length)extra=`<button class="linkish" data-toggle-shelved>${showShelved?"Hide":"Show"} shelved (${sh.length})</button>`+(showShelved?sh.map(cardHTML).join(""):"");
+    }
+    const count=k==="active"?`${list.length} of ${settings.cap}`:list.length;
+    const body=!loaded?`<div class="empty">Opening the catalogue…</div>`:(list.length?list.map(cardHTML).join(""):`<div class="empty">${EMPTY[k]}</div>`);
+    return `<section class="col${k==="active"?" active":""}" aria-label="${name}">
+      <div class="col-head"><h2>${name}</h2><span class="count">${count}</span></div>
+      <p class="col-sub">${sub}</p>${body}${extra}</section>`;
+  }).join("");
+  if(openId&&$("#detail").open)renderDetail();
+}
+
+/* detail */
+function renderDetail(){
+  const p=projects.find(x=>x.id===openId);
+  if(!p){$("#detail").close();return}
+  const full=activeCount()>=settings.cap;
+  const left=coolLeft(p);
+  const opts=AREAS.map(([k,v])=>`<option value="${k}"${k===p.area?" selected":""}>${v}</option>`).join("");
+  let act="";
+  if(p.stage==="idea"){
+    act=`<button class="btn primary" data-act="qualify"${left>0?" disabled":""}>Run qualification</button>`+
+      (left>0?`<span class="hint">Cooling for ${Math.ceil(left/DAY)} more day${Math.ceil(left/DAY)>1?"s":""}.</span>`:"")+
+      `<button class="btn" data-act="shelve">Shelve</button>`;
+  }else if(p.stage==="waiting"){
+    act=`<button class="btn primary" data-act="pull"${full?" disabled":""}>Pull into Active</button>`+
+      (full?`<span class="hint">Active is full. Finish or pause something first.</span>`:"")+
+      `<button class="btn" data-act="qualify">Re-qualify</button><button class="btn" data-act="toIdea">Back to ideas</button><button class="btn" data-act="shelve">Shelve</button>`;
+  }else if(p.stage==="active"){
+    act=`<button class="btn primary" data-act="finish">Mark finished</button><button class="btn" data-act="pause">Pause to Waiting</button><button class="btn" data-act="shelve">Shelve</button>`;
+  }else{
+    act=`<button class="btn" data-act="toIdea">Restore to ideas</button>`;
+  }
+  let sum="";
+  if(p.qual){
+    const q=p.qual,g=q.gates||{};
+    sum=`<div class="sum"><span class="legend">Qualification, ${fmt(q.date)}: ${q.total}/30, ${q.verdict==="pass"?"passed":"not yet"}</span>
+      <dl><dt>First step</dt><dd>${esc(g.firstStep)||"–"}</dd><dt>Done looks like</dt><dd>${esc(g.done)||"–"}</dd><dt>Gets less of you</dt><dd>${esc(g.displaces)||"–"}</dd></dl></div>`;
+  }
+  $("#detail-body").innerHTML=`
+    <h3>${esc(p.title)}</h3>
+    <div class="two">
+      <div class="field"><label for="d-title">Title</label><input id="d-title" value="${esc(p.title)}" maxlength="140"></div>
+      <div class="field"><label for="d-area">Area</label><select id="d-area">${opts}</select></div>
+    </div>
+    ${p.stage==="waiting"||p.stage==="active"?`<div class="field"><label for="d-next">Next step</label><input id="d-next" value="${esc(p.nextStep)}" maxlength="200"></div>`:""}
+    <div class="field"><label for="d-notes">Notes</label><textarea id="d-notes">${esc(p.notes)}</textarea></div>
+    <div class="actions">${act}</div>
+    ${sum}
+    <div class="actions"><button class="btn danger quiet" data-act="delete">Delete</button><span class="spacer"></span>
+      <button class="btn quiet" data-act="close">Cancel</button><button class="btn" data-act="save">Save</button></div>`;
+}
+function openDetail(id){openId=id;renderDetail();$("#detail").showModal()}
+function readDetailEdits(){
+  const d={title:($("#d-title").value.trim()||"Untitled"),area:$("#d-area").value,notes:$("#d-notes").value};
+  const n=$("#d-next");if(n)d.nextStep=n.value.trim();
+  return d;
+}
+let armedDelete=false;
+$("#detail").addEventListener("click",async e=>{
+  if(e.target===$("#detail")){$("#detail").close();return}
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const a=b.dataset.act,id=openId,now=Date.now();
+  if(a!=="delete")armedDelete=false;
+  if(a==="close"){$("#detail").close();return}
+  if(a==="delete"){
+    if(!armedDelete){armedDelete=true;b.textContent="Tap again to delete for good";return}
+    armedDelete=false;$("#detail").close();await removeCard(id);return;
+  }
+  const edits=readDetailEdits();
+  if(a==="save"){$("#detail").close();await patch(id,edits);return}
+  if(a==="qualify"){await patch(id,edits);$("#detail").close();openQual(id);return}
+  const moves={
+    shelve:{stage:"shelved",finishedAt:now},
+    pull:{stage:"active",activatedAt:now},
+    toIdea:{stage:"idea"},
+    finish:{stage:"done",finishedAt:now},
+    pause:{stage:"waiting"}
+  };
+  if(a==="pull"&&activeCount()>=settings.cap)return;
+  $("#detail").close();
+  await patch(id,{...edits,...moves[a]});
+});
+$("#detail").addEventListener("close",()=>{openId=null;armedDelete=false});
+
+/* qualification */
+let qualId=null;
+function openQual(id){
+  qualId=id;
+  const p=projects.find(x=>x.id===id);const q=p.qual||{};const g=q.gates||{};const s=q.scores||{};
+  $("#qual-form").innerHTML=`<div class="dlg">
+    <div><span class="legend">Qualification gate</span><h3>${esc(p.title)}</h3>
+    <p class="hint">Every gate must hold, and the score must reach ${settings.pass}/30, before this earns a place in Waiting.</p></div>
+    <fieldset><legend>Gates</legend>
+      <div class="field"><label for="q-first">First concrete step</label><input id="q-first" required value="${esc(g.firstStep)}" placeholder="Something you could do in one sitting"></div>
+      <div class="field"><label for="q-done">What does done look like?</label><input id="q-done" required value="${esc(g.done)}" placeholder="A finish line someone else could check"></div>
+      <div class="field"><label for="q-disp">What gets less of you if this goes ahead?</label><input id="q-disp" required value="${esc(g.displaces)}" placeholder="Name the trade-off"></div>
+      <label class="check"><input type="checkbox" id="q-fit"${g.fits?" checked":""}> It can finish, or reach a real milestone, inside 12 weeks.</label>
+    </fieldset>
+    <fieldset><legend>Score</legend>
+      ${CRIT.map(([k,q,h,lo,hi])=>`<div class="crit" role="radiogroup" aria-label="${esc(q)}">
+        <span class="q">${q}</span><span class="hint">${h}</span>
+        <div class="scale">${[1,2,3,4,5].map(v=>`<input type="radio" name="c-${k}" id="c-${k}-${v}" value="${v}"${s[k]===v?" checked":""}><label for="c-${k}-${v}">${v}</label>`).join("")}</div>
+        <div class="anchors"><span>${lo}</span><span>${hi}</span></div></div>`).join("")}
+    </fieldset></div>
+    <div class="verdict"><span class="score" id="q-score">0/30</span><span class="why" id="q-why"></span>
+      <button class="btn quiet" type="button" data-q="cancel">Cancel</button>
+      <button class="btn" type="button" data-q="park" id="q-park">Park as not yet</button>
+      <button class="btn primary" type="button" data-q="pass" id="q-pass" disabled>Send to Waiting</button></div>`;
+  updateVerdict();
+  $("#qual").showModal();
+}
+function readQual(){
+  const scores={};let total=0,answered=0;
+  CRIT.forEach(([k])=>{const c=document.querySelector(`input[name="c-${k}"]:checked`);if(c){scores[k]=+c.value;total+=+c.value;answered++}});
+  const gates={firstStep:$("#q-first").value.trim(),done:$("#q-done").value.trim(),displaces:$("#q-disp").value.trim(),fits:$("#q-fit").checked};
+  const gateOk=gates.firstStep&&gates.done&&gates.displaces&&gates.fits;
+  return {scores,total,answered,gates,gateOk:!!gateOk,pass:!!gateOk&&answered===CRIT.length&&total>=settings.pass};
+}
+function updateVerdict(){
+  const r=readQual();
+  $("#q-score").textContent=`${r.total}/30`;
+  const why=$("#q-why");why.classList.toggle("ok",r.pass);
+  if(r.pass)why.textContent="Passes. It can join the queue.";
+  else if(!r.gateOk)why.textContent="Fill all three gates and confirm the 12-week fit.";
+  else if(r.answered<CRIT.length)why.textContent=`Score all six (${r.answered} of 6 done).`;
+  else why.textContent=`Below the pass mark of ${settings.pass}. Park it and let it ripen.`;
+  $("#q-pass").disabled=!r.pass;
+}
+$("#qual-form").addEventListener("input",updateVerdict);
+$("#qual-form").addEventListener("submit",e=>e.preventDefault());
+$("#qual").addEventListener("click",async e=>{
+  if(e.target===$("#qual")){$("#qual").close();return}
+  const b=e.target.closest("[data-q]");if(!b)return;
+  if(b.dataset.q==="cancel"){$("#qual").close();return}
+  const r=readQual();
+  const qual={gates:r.gates,scores:r.scores,total:r.total,verdict:b.dataset.q==="pass"&&r.pass?"pass":"fail",date:Date.now()};
+  $("#qual").close();
+  if(qual.verdict==="pass")await patch(qualId,{qual,stage:"waiting",nextStep:r.gates.firstStep});
+  else await patch(qualId,{qual,stage:"idea"});
+});
+
+/* capture, board clicks, settings */
+$("#cap-area").innerHTML=AREAS.map(([k,v])=>`<option value="${k}">${v}</option>`).join("");
+$("#capture").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const t=$("#cap-title").value.trim();if(!t)return;
+  $("#cap-title").value="";
+  await put(newId(),{title:t,area:$("#cap-area").value,stage:"idea",notes:"",createdAt:Date.now()});
+});
+$("#board").addEventListener("click",e=>{
+  if(e.target.closest("[data-toggle-shelved]")){showShelved=!showShelved;render();return}
+  const c=e.target.closest(".card");if(c)openDetail(c.dataset.id);
+});
+$("#set-cap").addEventListener("change",e=>{settings.cap=+e.target.value;saveSettings()});
+$("#set-cool").addEventListener("change",e=>{settings.coolDays=+e.target.value;saveSettings()});
+$("#set-pass").addEventListener("change",e=>{settings.pass=+e.target.value;saveSettings()});
+
+/* boot */
+render();
+(async()=>{
+  try{
+    for(let i=0;i<20&&!(window.claude&&window.claude.use);i++)await new Promise(r=>setTimeout(r,100));
+    db=window.claude&&window.claude.use?await window.claude.use("db"):null;
+  }catch(e){db=null}
+  if(!db){
+    local=true;loaded=true;
+    note("Changes will not be kept in this view. Open the board on claude.ai while signed in to save.");
+    render();return;
+  }
+  db.collection("projects").onSnapshot(s=>{projects=s.docs.map(d=>({id:d.id,...d.data()}));loaded=true;render()},
+    ()=>note("Lost the link to your saved board. Reload the page to reconnect."));
+  db.doc("settings/main").onSnapshot(s=>{if(s.exists)settings={...settings,...s.data()};render()},()=>{});
+})();
+</script>
+
+</body></html>
